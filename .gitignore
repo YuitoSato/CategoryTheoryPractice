@@ -1,0 +1,10 @@
+/project
+/target
+/.idea
+/.classpath
+/.settings
+/RUNNING_PID
+.DS_Store
+git
+*.iml
+src/test/
