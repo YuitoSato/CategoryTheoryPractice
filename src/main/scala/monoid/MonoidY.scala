@@ -4,6 +4,6 @@ import semigroup.SemigroupY
 
 trait MonoidY[A] extends SemigroupY[A] {
 
-  def empty: A
+  def identity: A
 
 }
