@@ -10,11 +10,23 @@ sealed trait OptionY[+A] { self =>
 
   def flatMap[B](f: A => OptionY[B])(implicit monadY: MonadY[OptionY]): OptionY[B] = monadY.flatMap(self)(f)
 
+  def product[B](other: OptionY[B])(implicit applicativeY: ApplicativeY[OptionY]): OptionY[(A, B)] = applicativeY.product(self)(other)
+
+  def isEmpty: Boolean
+
 }
 
-final case class SomeY[A](a: A) extends OptionY[A]
+final case class SomeY[A](a: A) extends OptionY[A] {
 
-case object NoneY extends OptionY[Nothing]
+  override def isEmpty: Boolean = false
+
+}
+
+case object NoneY extends OptionY[Nothing] {
+
+  override def isEmpty: Boolean = true
+
+}
 
 object OptionY {
 
@@ -26,7 +38,7 @@ object OptionY {
   }
 
   implicit val optionYApplicativeYInstance: ApplicativeY[OptionY] = new ApplicativeY[OptionY] {
-    override def product[A, B](fa: OptionY[A], fb: OptionY[B]): OptionY[(A, B)] = (fa, fb) match {
+    override def product[A, B](fa: OptionY[A])(fb: OptionY[B]): OptionY[(A, B)] = (fa, fb) match {
       case (SomeY(a), SomeY(b)) => SomeY((a, b))
       case _ => NoneY
     }
@@ -46,7 +58,7 @@ object OptionY {
       case NoneY => NoneY
     }
 
-    override def product[A, B](fa: OptionY[A], fb: OptionY[B]): OptionY[(A, B)] = optionYApplicativeYInstance.product(fa, fb)
+    override def product[A, B](fa: OptionY[A])(fb: OptionY[B]): OptionY[(A, B)] = optionYApplicativeYInstance.product(fa)(fb)
 
     override def pure[A](a: A): OptionY[A] = optionYApplicativeYInstance.pure(a)
   }
