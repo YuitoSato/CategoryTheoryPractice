@@ -1,7 +1,7 @@
-import scala.concurrent.Future
+import scala.util.Try
 
 package object cont {
 
-  type FutureContY[A] = ContY[Future[A], A]
+  type TryContY[A] = ContY[Try[A], A]
 
 }
